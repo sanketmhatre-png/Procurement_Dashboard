@@ -124,15 +124,15 @@
    "file": "bom_2026-09.csv.gz",
    "rows": 166966,
    "amount": 715588020.22,
-   "bytes": 3585081
+   "bytes": 3584976
   },
   "2026-10": {
    "file": "bom_2026-10.csv.gz",
-   "rows": 103219,
-   "amount": 441704821.57,
-   "bytes": 2194040
+   "rows": 108964,
+   "amount": 462693490.7,
+   "bytes": 2318962
   }
  },
- "last_refresh": "2026-10-19T07:57:05Z",
- "total_rows": 2219313
+ "last_refresh": "2026-10-20T07:47:27Z",
+ "total_rows": 2225058
 }

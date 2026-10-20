@@ -124,15 +124,15 @@
    "file": "dn_2026-09.csv.gz",
    "rows": 158894,
    "amount": 1053125816.89,
-   "bytes": 2475474
+   "bytes": 2475476
   },
   "2026-10": {
    "file": "dn_2026-10.csv.gz",
-   "rows": 96860,
-   "amount": 513797460.68,
-   "bytes": 1452421
+   "rows": 102223,
+   "amount": 541107314.31,
+   "bytes": 1536747
   }
  },
- "last_refresh": "2026-10-19T07:56:49Z",
- "total_rows": 1973696
+ "last_refresh": "2026-10-20T07:47:03Z",
+ "total_rows": 1979059
 }
