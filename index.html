@@ -229,6 +229,24 @@ body.light tbody tr:hover td{background:#F5F8FF}
 body.light .rawstat b{color:#0F172A}
 @media (max-width:1080px){body.light .kpis{grid-template-columns:1fr 1fr}}
 @media (max-width:560px){body.light .kpis{grid-template-columns:1fr}}
+.whf{position:relative}
+.whf-btn{display:inline-flex;align-items:center;gap:8px;font:inherit;background:#fff;border:1px solid #D8E0EA;border-radius:10px;padding:7px 10px 7px 12px;color:#0F172A;cursor:pointer;min-width:230px;max-width:340px;transition:border-color .15s,box-shadow .15s}
+.whf-btn .whf-l{color:#5B6B82;font-weight:500}
+.whf-btn b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;text-align:left}
+.whf-btn svg{color:#5B6B82;flex:none}
+.whf-btn:hover,.whf-btn[aria-expanded="true"]{border-color:#2563EB;box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+.whf-btn.on{border-color:#93C5FD;background:#EFF6FF}
+.whf-pop{position:absolute;top:calc(100% + 6px);left:0;z-index:40;width:360px;max-width:90vw;background:#fff;border:1px solid #E2E8F0;border-radius:12px;box-shadow:0 18px 44px -14px rgba(15,23,42,.38);padding:8px}
+.whf-pop input{width:100%;font:inherit;padding:8px 10px;border:1px solid #D8E0EA;border-radius:8px;margin-bottom:6px;color:#0F172A;background:#fff}
+.whf-pop input:focus{outline:2px solid #2563EB;outline-offset:0;border-color:transparent}
+.whf-pop ul{list-style:none;margin:0;padding:0;max-height:340px;overflow:auto}
+.whf-pop li{padding:8px 10px;border-radius:7px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;color:#0F172A}
+.whf-pop li span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.whf-pop li small{color:#94A3B8;flex:none;font-variant-numeric:tabular-nums}
+.whf-pop li.act{background:#F1F5F9}
+.whf-pop li[aria-selected="true"]{background:#EFF6FF;color:#1D4ED8;font-weight:600}
+.whf-pop li mark{background:#FEF08A;color:inherit;border-radius:2px}
+.whf-pop .none{padding:10px;color:#94A3B8}
 #stockApp{padding-top:22px;padding-bottom:40px}
 .s-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:18px}
 .s-crumb{font-size:13px;color:#5B6B82;margin-bottom:4px;min-height:18px}
@@ -336,6 +354,13 @@ body.light .rawstat b{color:#0F172A}
     <div class="cal" role="group" aria-label="Date range">
       <label>From <input type="date" id="dFrom" aria-label="From date"></label>
       <label>to <input type="date" id="dTo" aria-label="To date"></label>
+      <div class="whf" id="whf">
+        <button type="button" class="whf-btn" id="whfBtn" aria-haspopup="listbox" aria-expanded="false"><span class="whf-l">Warehouse</span><b id="whfVal">All warehouses</b><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+        <div class="whf-pop" id="whfPop" hidden>
+          <input id="whfQ" type="search" placeholder="Search warehouse" aria-label="Search warehouse" autocomplete="off">
+          <ul id="whfList" role="listbox" aria-label="Warehouses"></ul>
+        </div>
+      </div>
       <button class="linkbtn" id="dAll" hidden>Show all dates</button>
     </div>
     <div class="chips" id="chips"></div>
@@ -401,6 +426,7 @@ body.light .rawstat b{color:#0F172A}
     <div class="s-card-h">
       <h3 id="sTableTitle">Warehouses</h3>
       <div class="s-tools">
+        <div class="seg" id="sMode" role="group" aria-label="Table view"><button data-m="summary" aria-pressed="true">Summary</button><button data-m="raw" aria-pressed="false">Raw data</button></div>
         <label class="s-search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="sSearch" type="search" placeholder="Search warehouse" aria-label="Search"></label>
       </div>
     </div>
@@ -566,6 +592,7 @@ function readHash() {
     for (const d of DIMS) if (h[d]) st.F[d] = new Set(h[d].map(n => S.dims[d].indexOf(n)).filter(i => i >= 0));
     if (h.q) st.q = h.q;
     if (h.sw) stk.wh = h.sw;
+    if (h.sm === 'raw') stk.mode = 'raw';
   } catch (e) {}
 }
 function writeHash() {
@@ -573,6 +600,7 @@ function writeHash() {
   for (const d of DIMS) if (st.F[d].size) h[d] = [...st.F[d]].map(i => S.dims[d][i]);
   if (st.q) h.q = st.q;
   if (DS.computed && stk.wh) h.sw = stk.wh;
+  if (DS.computed && stk.mode === 'raw') h.sm = 'raw';
   history.replaceState(null, '', '#' + encodeURIComponent(JSON.stringify(h)));
 }
 
@@ -664,6 +692,7 @@ function renderHeader() {
   $('#fresh').innerHTML = `${nfI.format(manifest.total_rows)} ${DS.rowsLabel || 'line items'} from ${fmtDate(S.first_date)} to <b>${fmtDate(S.last_date)}</b>. Refreshed ${last.toLocaleString('en-IN', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'})}.`;
 }
 function renderControls() {
+  renderWhf();
   $('#dFrom').value = st.from; $('#dTo').value = st.to;
   $('#dAll').hidden = isAllDates();
   document.querySelectorAll('#metric button').forEach(b => b.setAttribute('aria-pressed', b.dataset.m === st.metric));
@@ -1069,7 +1098,7 @@ function stockDocs(v, byDim) {
 function inStock(v) { let n = 0; for (const r of v.cube) if (r[8] > 0 && okC(r)) n++; return n; }
 
 // ================= Stock page: warehouse first, then items of one warehouse =================
-const stk = {wh: null, sort: {key: 'value', dir: -1}, q: '', limit: 50};
+const stk = {wh: null, sort: {key: 'value', dir: -1}, q: '', limit: 50, mode: 'summary', rawSort: {key: 'd', dir: -1}};
 const SCOL = ['#2563EB','#0891B2','#0D9488','#16A34A','#65A30D','#CA8A04','#EA580C','#DC2626','#DB2777','#9333EA','#4F46E5','#0284C7'];
 const sTip = $('#sTip');
 function sShowTip(e, html) {
@@ -1113,6 +1142,7 @@ function sDelta(cur, prev, label) {
   return `<div class="s-kpi-d"><b class="${p >= 0 ? 'up' : 'down'}">${p >= 0 ? '▲' : '▼'} ${Math.abs(p).toFixed(1)}%</b> vs ${label}</div>`;
 }
 function renderStock() {
+  renderWhf();
   const wIdx = stkWIdx(), open = wIdx >= 0;
   const cur = stockGroups(view, wIdx), prev = view.prev ? stockGroups(view.prev, wIdx) : null;
   const sum = (rows, k) => rows.reduce((t, r) => t + r[k], 0);
@@ -1187,6 +1217,7 @@ function renderTreemap(rows, open, total) {
 }
 function openWarehouse(name) { stk.wh = name; stk.q = ''; stk.limit = 50; stk.sort = {key: 'value', dir: -1}; $('#sSearch').value = ''; refresh(); scrollTo({top: 0, behavior: 'smooth'}); }
 function highlightRow(name) {
+  if (stk.mode === 'raw') { stk.q = name; stk.limit = 50; $('#sSearch').value = name; renderStockTable(lastStockRows, true, lastStockTotal); $('#sTable').scrollIntoView({behavior: 'smooth', block: 'start'}); return; }
   stk.q = ''; $('#sSearch').value = '';
   const rows = sortedStockRows(lastStockRows, true), i = rows.findIndex(r => r.name === name);
   if (i >= stk.limit) stk.limit = i + 1;
@@ -1203,6 +1234,7 @@ function renderTrend(wIdx) {
     if (wIdx >= 0 && D.w[k] !== wIdx) continue;
     const b = months[idx.get(d.slice(0, 7))]; b.docs.add(D.id[k]); b.lines++;
   }
+  months.reverse();   // newest month on the left
   const svgW = $('#sTrend').clientWidth || 420, H = 300, pl = 44, pb = 34, pt = 14, n = months.length;
   const max = Math.max(1, ...months.map(b => b.docs.size)), bw = (svgW - pl - 8) / n;
   const step = niceStep(max / 4), top = Math.ceil(max / step) * step, y = v => pt + (H - pt - pb) * (1 - v / top);
@@ -1215,7 +1247,7 @@ function renderTrend(wIdx) {
     h += `<rect x="${x}" y="${y(v)}" width="${w}" height="${Math.max(0, H - pb - y(v))}" rx="4" fill="url(#sg)"/>`;
     if (bw > 26 && v) h += `<text x="${x + w / 2}" y="${y(v) - 6}" text-anchor="middle" font-size="11" font-weight="600" fill="#334155">${nfI.format(v)}</text>`;
     h += `<text x="${x + w / 2}" y="${H - pb + 16}" text-anchor="middle" font-size="11.5" fill="#5B6B82">${MON[+mm - 1]}</text>`;
-    if (i === 0 || mm === '01') h += `<text x="${x + w / 2}" y="${H - pb + 30}" text-anchor="middle" font-size="11" font-weight="600" fill="#94A3B8">${yy}</text>`;
+    if (i === 0 || yy !== months[i - 1].m.slice(0, 4)) h += `<text x="${x + w / 2}" y="${H - pb + 30}" text-anchor="middle" font-size="11" font-weight="600" fill="#94A3B8">${yy}</text>`;
     h += `<rect class="bar-hit" data-i="${i}" x="${pl + i * bw}" y="${pt}" width="${bw}" height="${H - pt - pb}" fill="transparent"/>`;
   });
   $('#sTrend').innerHTML = `<svg viewBox="0 0 ${svgW} ${H}" role="img" aria-label="Receipts per month">${h}</svg>`;
@@ -1246,6 +1278,8 @@ function agePill(last) {
 }
 function renderStockTable(rows, open, total) {
   lastStockRows = rows; lastStockTotal = total;
+  document.querySelectorAll('#sMode button').forEach(b => b.setAttribute('aria-pressed', b.dataset.m === stk.mode));
+  if (stk.mode === 'raw') return renderStockRaw(open);
   const cols = STK_COLS[open ? 'item' : 'wh'];
   $('#sTableTitle').textContent = open ? `Items in ${stk.wh}` : 'Warehouses';
   $('#sSearch').placeholder = open ? 'Search item code' : 'Search warehouse';
@@ -1276,9 +1310,60 @@ function renderStockTable(rows, open, total) {
   };
   $('#sTable tbody').onclick = e => { if (open) return; const tr = e.target.closest('tr[data-name]'); if (tr) openWarehouse(tr.dataset.name); };
 }
+
+// ---------- Raw data view: every receipt line, newest first ----------
+const RAW_COLS = [['d', 'Date', 0], ['w', 'Warehouse', 0], ['i', 'Item code', 0], ['id', 'Document', 0], ['q', 'Qty after receipt', 1], ['r', 'Avg rate', 1], ['u', 'UOM', 0]];
+function stockRawRows() {
+  const D = stockData, wIdx = stkWIdx(), q = stk.q.trim().toLowerCase(), out = [];
+  for (let k = 0; k < D.d.length; k++) {
+    const d = D.d[k]; if (d < st.from || d > st.to) continue;
+    if (wIdx >= 0 && D.w[k] !== wIdx) continue;
+    if (q && !(S.dims.warehouse[D.w[k]] + '\u0001' + S.dims.category[D.i[k]] + '\u0001' + D.id[k]).toLowerCase().includes(q)) continue;
+    out.push(k);
+  }
+  const {key, dir} = stk.rawSort;
+  const val = {d: k => D.d[k], w: k => S.dims.warehouse[D.w[k]], i: k => S.dims.category[D.i[k]], id: k => D.id[k], q: k => D.q[k], r: k => D.r[k], u: k => S.dims.group[D.u[k]]}[key];
+  out.sort((a, b) => { const x = val(a), y = val(b); return (x < y ? -1 : x > y ? 1 : 0) * dir || (b - a); });
+  return out;
+}
+function renderStockRaw(open) {
+  const D = stockData, list = stockRawRows(), shown = list.slice(0, stk.limit);
+  $('#sTableTitle').textContent = open ? `Receipts in ${stk.wh}` : 'Receipts (raw data)';
+  $('#sSearch').placeholder = 'Search item, document or warehouse';
+  const head = '<thead><tr>' + RAW_COLS.map(([k, label, numCol]) => `<th class="${numCol ? 'n' : ''}" data-k="${k}">${label}${stk.rawSort.key === k ? `<span class="arr">${stk.rawSort.dir > 0 ? '↑' : '↓'}</span>` : ''}</th>`).join('') + '</tr></thead>';
+  const body = shown.map(k => `<tr${open ? '' : ' class="click" title="Click to open this warehouse"'} data-name="${esc(S.dims.warehouse[D.w[k]])}">
+    <td>${fmtDate(D.d[k])}</td><td>${esc(S.dims.warehouse[D.w[k]])}</td><td>${esc(S.dims.category[D.i[k]])}</td><td>${esc(D.id[k])}</td>
+    <td class="n">${nf2.format(D.q[k])}</td><td class="n">₹${nf2.format(D.r[k])}</td><td>${esc(S.dims.group[D.u[k]])}</td></tr>`).join('');
+  $('#sTable').innerHTML = head + `<tbody>${body || `<tr><td colspan="${RAW_COLS.length}" class="s-empty">No receipts for these dates${stk.q ? ' and search' : ''}.</td></tr>`}</tbody>`;
+  $('#sMore').innerHTML = list.length > shown.length
+    ? `<span class="s-hint">Showing ${nfI.format(shown.length)} of ${nfI.format(list.length)} receipt lines</span> &nbsp; <button class="s-btn" id="sMoreBtn">Show ${Math.min(100, list.length - shown.length)} more</button>`
+    : (list.length ? `<span class="s-hint">${nfI.format(list.length)} receipt lines</span>` : '');
+  const more = $('#sMoreBtn'); if (more) more.onclick = () => { stk.limit += 100; renderStockRaw(open); };
+  $('#sTable thead').onclick = e => {
+    const th = e.target.closest('th'); if (!th) return;
+    const k = th.dataset.k; stk.rawSort = {key: k, dir: stk.rawSort.key === k ? -stk.rawSort.dir : (['q', 'r', 'd'].includes(k) ? -1 : 1)};
+    renderStockRaw(open);
+  };
+  $('#sTable tbody').onclick = e => { if (open) return; const tr = e.target.closest('tr[data-name]'); if (tr) openWarehouse(tr.dataset.name); };
+}
+function downloadStockRaw() {
+  const D = stockData, list = stockRawRows(), q = v => /[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : v;
+  const lines = ['Date,warehouse,item_code,ID,QTY,AVG_Rate,UOM'];
+  for (const k of list) lines.push([D.d[k], S.dims.warehouse[D.w[k]], S.dims.category[D.i[k]], D.id[k], D.q[k], D.r[k], S.dims.group[D.u[k]]].map(q).join(','));
+  const url = URL.createObjectURL(new Blob(['\uFEFF' + lines.join('\n') + '\n'], {type: 'text/csv'}));
+  const a = document.createElement('a'); a.href = url;
+  a.download = `Stock_receipts_${stk.wh ? stk.wh.replace(/[^\w-]+/g, '_') + '_' : ''}${st.from}_to_${st.to}.csv`;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 60000);
+}
+$('#sMode').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b || b.dataset.m === stk.mode) return;
+  stk.mode = b.dataset.m; stk.limit = 50; writeHash();
+  renderStockTable(lastStockRows, stkWIdx() >= 0, lastStockTotal);
+});
 let sQT; $('#sSearch').addEventListener('input', e => { clearTimeout(sQT); sQT = setTimeout(() => { stk.q = e.target.value; stk.limit = 50; renderStockTable(lastStockRows, stkWIdx() >= 0, lastStockTotal); }, 200); });
-addEventListener('keydown', e => { if (e.key === 'Escape' && DS.computed && stk.wh) { stk.wh = null; refresh(); } });
+addEventListener('keydown', e => { if (e.key === 'Escape' && DS.computed && stk.wh && $('#whfPop').hidden) { stk.wh = null; refresh(); } });
 $('#sDownload').addEventListener('click', () => {
+  if (stk.mode === 'raw') return downloadStockRaw();
   const open = stkWIdx() >= 0, cols = STK_COLS[open ? 'item' : 'wh'], list = sortedStockRows(lastStockRows, open);
   const cell = (r, k) => k === 'share' ? (lastStockTotal ? (r.value / lastStockTotal * 100).toFixed(2) : '0') : k === 'value' || k === 'rate' ? r[k].toFixed(2) : r[k];
   const q = v => /[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : v;
@@ -1289,6 +1374,66 @@ $('#sDownload').addEventListener('click', () => {
   setTimeout(() => URL.revokeObjectURL(url), 60000);
 });
 let sRz; addEventListener('resize', () => { clearTimeout(sRz); sRz = setTimeout(() => { if (DS.computed && S && !$('#stockApp').hidden) renderStock(); }, 150); });
+
+// ---------- Warehouse dropdown with search (works on every page) ----------
+const whf = {items: [], shown: [], act: 0};
+function whfCurrent() {
+  if (!S) return null;
+  if (DS.computed) return stk.wh;
+  const f = st.F.warehouse;
+  return f.size === 1 ? S.dims.warehouse[[...f][0]] : f.size > 1 ? `${f.size} warehouses` : null;
+}
+function renderWhf() {
+  const c = whfCurrent();
+  $('#whfVal').textContent = c || 'All warehouses';
+  $('#whfBtn').classList.toggle('on', !!c);
+  $('#whfBtn').title = c || 'All warehouses';
+}
+function whfItems() {
+  const vals = new Map();
+  if (DS.computed) { for (const r of view.cube || []) vals.set(r[1], (vals.get(r[1]) || 0) + r[6]); }
+  else for (const [i, v] of breakdown('warehouse', 'amount')) vals.set(i, v);   // value with all other filters applied
+  return S.dims.warehouse.map((n, i) => ({n, i, v: vals.get(i) || 0})).sort((a, b) => b.v - a.v || a.n.localeCompare(b.n));
+}
+function whfRenderList() {
+  const q = $('#whfQ').value.trim().toLowerCase(), cur = whfCurrent();
+  const hl = n => { if (!q) return esc(n); const i = n.toLowerCase().indexOf(q); return esc(n.slice(0, i)) + '<mark>' + esc(n.slice(i, i + q.length)) + '</mark>' + esc(n.slice(i + q.length)); };
+  whf.shown = [{n: null}, ...whf.items.filter(x => !q || x.n.toLowerCase().includes(q))];
+  if (whf.act >= whf.shown.length) whf.act = whf.shown.length - 1;
+  $('#whfList').innerHTML = whf.shown.map((x, k) => x.n === null
+    ? `<li role="option" data-k="${k}" aria-selected="${!cur}" class="${k === whf.act ? 'act' : ''}"><span>All warehouses</span></li>`
+    : `<li role="option" data-k="${k}" aria-selected="${cur === x.n}" class="${k === whf.act ? 'act' : ''}"><span>${hl(x.n)}</span><small>${x.v ? inr(x.v) : '—'}</small></li>`).join('')
+    + (whf.shown.length === 1 && q ? '<div class="none">No warehouse matches</div>' : '');
+  const act = $('#whfList li.act'); if (act) act.scrollIntoView({block: 'nearest'});
+}
+function whfOpen() {
+  if (!S) return;
+  whf.items = whfItems(); whf.act = 0;
+  $('#whfPop').hidden = false; $('#whfBtn').setAttribute('aria-expanded', 'true');
+  $('#whfQ').value = ''; whfRenderList(); $('#whfQ').focus();
+}
+function whfClose() { $('#whfPop').hidden = true; $('#whfBtn').setAttribute('aria-expanded', 'false'); }
+function whfPick(name) {
+  whfClose();
+  if (DS.computed) {
+    if (name) openWarehouse(name);
+    else { stk.wh = null; stk.q = ''; stk.limit = 50; $('#sSearch').value = ''; refresh(); }
+  } else {
+    st.F.warehouse = name ? new Set([S.dims.warehouse.indexOf(name)]) : new Set();
+    refresh();
+  }
+}
+$('#whfBtn').addEventListener('click', () => $('#whfPop').hidden ? whfOpen() : whfClose());
+$('#whfQ').addEventListener('input', () => { whf.act = $('#whfQ').value.trim() ? 1 : 0; whfRenderList(); });
+$('#whfQ').addEventListener('keydown', e => {
+  if (e.key === 'ArrowDown') { whf.act = Math.min(whf.shown.length - 1, whf.act + 1); whfRenderList(); e.preventDefault(); }
+  else if (e.key === 'ArrowUp') { whf.act = Math.max(0, whf.act - 1); whfRenderList(); e.preventDefault(); }
+  else if (e.key === 'Enter') { const x = whf.shown[whf.act]; if (x) whfPick(x.n); e.preventDefault(); }
+  else if (e.key === 'Escape') { whfClose(); $('#whfBtn').focus(); e.stopPropagation(); }
+});
+$('#whfList').addEventListener('click', e => { const li = e.target.closest('li[data-k]'); if (li) whfPick(whf.shown[+li.dataset.k].n); });
+$('#whfList').addEventListener('mousemove', e => { const li = e.target.closest('li[data-k]'); if (li && +li.dataset.k !== whf.act) { whf.act = +li.dataset.k; $('#whfList li.act')?.classList.remove('act'); li.classList.add('act'); } });
+document.addEventListener('click', e => { if (!$('#whfPop').hidden && !e.target.closest('#whf')) whfClose(); });
 
 let loadTok = 0;
 async function loadDataset(key, fromHash) {
@@ -1305,7 +1450,8 @@ async function loadDataset(key, fromHash) {
   $('#mDocs').textContent = DS.docsLabel; $('#hTable').textContent = DS.tableHint; $('#q').placeholder = DS.searchPh; $('#foot').textContent = DS.footer;
   document.body.classList.add('light');   // one light theme for every page
   $('#stockApp').hidden = true; if (DS.computed) { $('#app').hidden = true; $('#msg').hidden = false; $('#msg').textContent = 'Loading stock data…'; }
-  stk.wh = null; stk.q = ''; stk.limit = 50; stk.sort = {key: 'value', dir: -1}; $('#sSearch').value = '';
+  whfClose(); $('#whfVal').textContent = 'All warehouses'; $('#whfBtn').classList.remove('on');
+  stk.wh = null; stk.q = ''; stk.limit = 50; stk.sort = {key: 'value', dir: -1}; stk.mode = 'summary'; stk.rawSort = {key: 'd', dir: -1}; $('#sSearch').value = '';
   // forget everything from the previous dataset
   raw.token++; upTok++;
   Object.assign(raw, {header: null, idx: null, rows: [], matched: 0, done: false, sort: null, view: null, layout: null});
