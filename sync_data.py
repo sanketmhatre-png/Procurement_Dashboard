@@ -2,14 +2,16 @@
 Sync the Procurement Dashboard data from Metabase into monthly .csv.gz files, plus an all-time summary.
   dn  -> Delivery Note line items (Metabase question DN_S),  dated by posting date,   saved in dn/
   bom -> BOM line items          (Metabase question BOM_S), dated by creation date, saved in bom/
+  stock -> incoming stock ledger entries (Metabase question "stock Balnce"), from Apr 2026, saved in stock/
 
 Runs in GitHub Actions (sync_data.yml). METABASE_URL defaults to SolarSquare's Metabase. Needs either:
   - METABASE_USERNAME and METABASE_PASSWORD (your normal Metabase login), or
   - METABASE_API_KEY (created by a Metabase admin)
 
-    python sync_data.py              # both datasets: missing months + refresh the last 2 months
+    python sync_data.py              # all datasets: missing months + refresh the last 2 months
     python sync_data.py dn           # only delivery notes
     python sync_data.py bom --full   # only BOMs, re-export every month
+    python sync_data.py stock        # only stock
 """
 import csv, gzip, io, json, os, re, sys, time
 from datetime import date, datetime, timezone
@@ -66,6 +68,28 @@ ORDER BY b.creation DESC
                 "warehouse": "warehouse", "category": "item_category", "amount": "amount",
                 "status": "workflow_state"},
         "group": "status",
+    },
+    "stock": {
+        "label": "Stock",
+        "out_dir": "stock",
+        "start": date(2026, 4, 1),
+        "summary": False,               # data only for now; the dashboard view comes later
+        # Same SQL as Metabase question "stock Balnce" (#6126), one month (by creation) at a time.
+        "sql": """
+SELECT
+    DATE(creation)          AS `Date`,
+    warehouse,
+    item_code,
+    voucher_no              AS ID,
+    qty_after_transaction   AS QTY,
+    valuation_rate          AS AVG_Rate,
+    stock_uom               AS UOM
+FROM `tabStock Ledger Entry`
+WHERE actual_qty >= 1
+  AND creation >= '{start}' AND creation < '{end}'
+ORDER BY warehouse, item_code, creation
+""",
+        "col": {"id": "ID", "date": "Date", "amount": None},
     },
 }
 
@@ -130,7 +154,8 @@ def count_rows(text, amount_col):
     rows, amount = 0, 0.0
     for row in csv.DictReader(io.StringIO(text)):
         rows += 1
-        amount += num(row.get(amount_col))
+        if amount_col:
+            amount += num(row.get(amount_col))
     return rows, round(amount, 2)
 
 STATES = {"MH": "Maharashtra", "UP": "Uttar Pradesh", "MP": "Madhya Pradesh", "TN": "Tamil Nadu",
@@ -208,7 +233,7 @@ def sync(key, full):
     print(f"=== {cfg['label']} -> {out_dir}/ ===")
     manifest_path = out_dir / "manifest.json"
     manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else {"months": {}}
-    all_months = list(months(START, date.today()))
+    all_months = list(months(cfg.get("start", START), date.today()))
     recent = {f"{m:%Y-%m}" for m, _ in all_months[-REFRESH_MONTHS:]}
 
     for first, nxt in all_months:
@@ -231,17 +256,18 @@ def sync(key, full):
     manifest["last_refresh"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     manifest["total_rows"] = sum(m["rows"] for m in manifest["months"].values())
     manifest_path.write_text(json.dumps(manifest, indent=1))
-    t = time.time()
-    summary = build_summary(cfg, out_dir, manifest)
-    (out_dir / "summary.json").write_text(json.dumps(summary, separators=(",", ":")))
-    print(f"Summary: {len(summary['cube']):,} cells ({time.time()-t:.0f}s)")
+    if cfg.get("summary", True):
+        t = time.time()
+        summary = build_summary(cfg, out_dir, manifest)
+        (out_dir / "summary.json").write_text(json.dumps(summary, separators=(",", ":")))
+        print(f"Summary: {len(summary['cube']):,} cells ({time.time()-t:.0f}s)")
     print(f"{cfg['label']} done: {manifest['total_rows']:,} rows across {len(manifest['months'])} months.\n")
 
 def main():
     args = [a.lower() for a in sys.argv[1:]]
     full = "--full" in args
-    which = next((a for a in args if a in ("dn", "bom", "both")), "both")
-    keys = ["dn", "bom"] if which == "both" else [which]
+    which = next((a for a in args if a in DATASETS or a in ("all", "both")), "all")
+    keys = list(DATASETS) if which in ("all", "both") else [which]   # "both" kept for older workflow files
     HEADERS.update(auth_headers())
     failed = []
     try:
