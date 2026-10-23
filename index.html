@@ -164,6 +164,141 @@ tbody tr:hover td{background:#122036}
 footer{color:var(--faint);font-size:12.5px;padding:0 0 40px}
 #msg{padding:80px 0;text-align:center;color:var(--muted)}
 
+
+/* ================= Light theme (Stock page) ================= */
+body.light{color-scheme:light;--bg:#F3F6FA;--ink:#0F172A;--muted:#5B6B82;--faint:#94A3B8;--line:#E2E8F0;--line-soft:#EEF2F7;--well:#F1F5F9;
+  --card:#FFFFFF;--sunk:inset 0 1px 2px rgba(15,23,42,.06);--raise:0 1px 2px rgba(15,23,42,.05),0 6px 20px -10px rgba(15,23,42,.18);
+  --raise-hi:0 2px 4px rgba(15,23,42,.06),0 14px 30px -12px rgba(15,23,42,.25);background:#F3F6FA;color:#0F172A}
+body.light .rainbow{box-shadow:none;opacity:.9}
+body.light h1{background:none;-webkit-background-clip:initial;background-clip:initial;color:#0F172A}
+body.light .fresh b{color:#0F172A}
+body.light .bar{background:rgba(255,255,255,.88);box-shadow:0 1px 0 #E2E8F0}
+body.light .seg{background:#EEF2F7;border-color:#E2E8F0;box-shadow:none}
+body.light .seg button[aria-pressed="true"]{background:#2563EB;box-shadow:0 2px 6px -2px rgba(37,99,235,.55)}
+body.light .ghost{background:#fff;border-color:#E2E8F0;box-shadow:0 1px 2px rgba(15,23,42,.05)}
+body.light .cal input[type=date]{color-scheme:light;background:#fff;border-color:#D8E0EA;box-shadow:none}
+body.light .cal input[type=date]::-webkit-calendar-picker-indicator{filter:none;opacity:.6}
+body.light.busy #stockApp{opacity:.55;transition:opacity .2s}
+/* ---- Light theme for the Delivery notes and BOMs pages (same look as Stock) ---- */
+body.light{--c1:#2563EB;--c2:#EA580C;--c3:#0D9488;--c4:#DC2626;--c5:#7C3AED;--c6:#CA8A04;--c7:#0284C7;--c8:#DB2777;--c9:#65A30D;--c10:#64748B;--sun:#CA8A04;--up:#15803D;--down:#DC2626}
+body.light .kpis{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;perspective:none;margin:22px 0}
+body.light .kpi{background:#fff;border:1px solid #E2E8F0;border-radius:14px;padding:16px 18px 15px;box-shadow:0 1px 2px rgba(15,23,42,.04);transform:none!important;overflow:hidden;transition:transform .15s,box-shadow .15s}
+body.light .kpi:hover{transform:translateY(-2px)!important;box-shadow:0 10px 24px -14px rgba(15,23,42,.3)}
+body.light .kpi::after{display:none}
+body.light .kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--k)}
+body.light .kpi .lbl{color:#5B6B82;transform:none;font-size:13px}
+body.light .kpi .lbl::before{width:8px;height:8px;background:var(--k);box-shadow:none;margin-right:7px;vertical-align:1px}
+body.light .kpi .val,body.light .kpi:first-child .val{font-size:28px;color:#0F172A;text-shadow:none;transform:none;margin-top:6px}
+body.light .kpi .val small{color:#5B6B82}
+body.light .delta{transform:none;color:#5B6B82;font-size:12.5px;margin-top:6px}
+body.light .delta .up,body.light .delta .down{text-shadow:none}
+body.light .panel{background:#fff;border:1px solid #E2E8F0;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+body.light .panel::before{display:none}
+body.light .grid .panel:hover{transform:translateY(-2px);box-shadow:0 10px 24px -14px rgba(15,23,42,.3)}
+body.light h2{font-size:15.5px}
+body.light .sec-head h2{font-size:18px}
+body.light h2 .dot{box-shadow:none;width:10px;height:10px;border-radius:3px}
+body.light .share{height:12px;background:#EEF2F7;box-shadow:none;border-radius:6px}
+body.light .share::after{display:none}
+body.light .share span+span{box-shadow:-1px 0 0 #fff}
+body.light .li:hover{background:#F5F8FF;transform:none}
+body.light .li .trk{height:9px;background:#EEF2F7;box-shadow:none}
+body.light .li .fill{background:var(--k);box-shadow:none}
+body.light .li .nm::before{background:var(--k);box-shadow:none}
+body.light .li .v{color:#0F172A}
+body.light .list.has-sel .li:not(.sel){color:#94A3B8}
+body.light .li.sel{background:color-mix(in srgb,var(--k) 10%,#fff);box-shadow:none}
+body.light .li.sel::before{box-shadow:none}
+body.light .chip{background:color-mix(in srgb,var(--k) 10%,#fff);border-color:color-mix(in srgb,var(--k) 40%,#fff);box-shadow:none}
+body.light .chip button:hover{color:#0F172A}
+body.light .search input{background:#fff;border-color:#D8E0EA;box-shadow:none;color:#0F172A}
+body.light .search input:focus{outline:2px solid #2563EB;border-color:transparent}
+body.light .primary{background:#2563EB;box-shadow:0 2px 6px -2px rgba(37,99,235,.55)}
+body.light .primary:hover{background:#1D4ED8;transform:none;box-shadow:0 2px 8px -2px rgba(37,99,235,.6)}
+body.light .prog{background:#EEF2F7;box-shadow:none}
+body.light .prog i{background:#2563EB;box-shadow:none}
+body.light .tbl-wrap{background:#fff;border-color:#E2E8F0;box-shadow:none}
+body.light th{background:#F8FAFC;color:#5B6B82;border-bottom:1px solid #E2E8F0;box-shadow:none}
+body.light th.sortable:hover{color:#0F172A}
+body.light th .arr{color:#2563EB}
+body.light td{border-bottom-color:#EEF2F7}
+body.light td.dn{color:#1D4ED8}
+body.light td.dn:hover{color:#1E40AF}
+body.light td.amt{color:#0F172A}
+body.light tbody tr:hover td{background:#F5F8FF}
+body.light .rawstat b{color:#0F172A}
+@media (max-width:1080px){body.light .kpis{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){body.light .kpis{grid-template-columns:1fr}}
+#stockApp{padding-top:22px;padding-bottom:40px}
+.s-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.s-crumb{font-size:13px;color:#5B6B82;margin-bottom:4px;min-height:18px}
+.s-crumb button{border:0;background:none;padding:0;color:#2563EB;font-weight:600;cursor:pointer}
+.s-crumb button:hover{text-decoration:underline}
+.s-head h2{font-size:22px;font-weight:700;letter-spacing:-.01em;margin:0}
+.s-sub{color:#5B6B82;margin:4px 0 0}
+.s-btn{border:1px solid #D8E0EA;background:#fff;color:#0F172A;border-radius:9px;padding:8px 14px;font-weight:600;box-shadow:0 1px 2px rgba(15,23,42,.05);transition:border-color .15s,box-shadow .15s}
+.s-btn:hover{border-color:#2563EB;box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+.s-btn.primary{background:#2563EB;border-color:#2563EB;color:#fff}
+.s-btn.primary:hover{background:#1D4ED8}
+.s-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:18px}
+.s-kpi{position:relative;background:#fff;border:1px solid #E2E8F0;border-radius:14px;padding:16px 18px 15px;box-shadow:0 1px 2px rgba(15,23,42,.04);overflow:hidden;transition:transform .15s,box-shadow .15s}
+.s-kpi:hover{transform:translateY(-2px);box-shadow:0 10px 24px -14px rgba(15,23,42,.3)}
+.s-kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--k)}
+.s-kpi-l{font-size:13px;color:#5B6B82;font-weight:500;display:flex;align-items:center;gap:7px}
+.s-kpi-l i{width:8px;height:8px;border-radius:50%;background:var(--k)}
+.s-kpi-v{font-size:28px;font-weight:700;letter-spacing:-.02em;margin-top:6px;white-space:nowrap}
+.s-kpi-v small{font-size:.5em;font-weight:600;color:#5B6B82;margin-left:4px}
+.s-kpi-d{font-size:12.5px;color:#5B6B82;margin-top:6px}
+.s-kpi-d b.up{color:#15803D}.s-kpi-d b.down{color:#DC2626}
+.s-grid{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:16px;margin-bottom:16px}
+.s-card{background:#fff;border:1px solid #E2E8F0;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+.s-card-h{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.s-card-h h3{font-size:15.5px;font-weight:600;margin:0}
+.s-hint{color:#94A3B8;font-size:12.5px}
+.treemap{position:relative;height:340px;border-radius:10px;overflow:hidden;background:#F1F5F9}
+.tm{position:absolute;box-sizing:border-box;border:2px solid #fff;border-radius:8px;padding:8px 10px;color:#fff;overflow:hidden;cursor:pointer;transition:filter .15s,transform .15s;font-size:12.5px;line-height:1.3}
+.tm:hover{filter:brightness(1.08) saturate(1.1);z-index:2;transform:scale(1.012)}
+.tm.other{cursor:default;color:#475569;background:#E2E8F0!important}
+.tm b{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tm span{opacity:.92;white-space:nowrap}
+.tm.flash{animation:flash 1s ease 2}
+@keyframes flash{50%{filter:brightness(1.3)}}
+#sTrend svg{display:block;width:100%;height:300px}
+#sTrend .bar-hit{cursor:pointer}
+.s-tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.s-search{position:relative}
+.s-search input{font:inherit;width:260px;max-width:60vw;padding:8px 12px 8px 32px;border:1px solid #D8E0EA;border-radius:9px;background:#fff;color:#0F172A}
+.s-search input:focus{outline:2px solid #2563EB;outline-offset:0;border-color:transparent}
+.s-search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:#94A3B8}
+.s-table-wrap{overflow-x:auto}
+.s-table{width:100%;border-collapse:collapse;font-size:13.5px;table-layout:auto;font-family:var(--sans)}
+.s-table tbody tr:hover td{background:#F5F8FF}
+.s-table tbody tr.hl td{background:#FEF9C3}
+.s-table td{height:auto;overflow:visible}
+.s-table th{position:sticky;top:0;background:#F8FAFC;text-align:left;font-weight:600;font-size:12.5px;color:#5B6B82;padding:10px 12px;border-bottom:1px solid #E2E8F0;cursor:pointer;user-select:none;white-space:nowrap}
+.s-table th:hover{color:#0F172A}
+.s-table th.n,.s-table td.n{text-align:right}
+.s-table th .arr{color:#2563EB;margin-left:4px}
+.s-table td{padding:10px 12px;border-bottom:1px solid #EEF2F7;white-space:nowrap}
+.s-table tbody tr{transition:background .12s}
+.s-table tbody tr:hover{background:#F5F8FF}
+.s-table tbody tr.click{cursor:pointer}
+.s-table tbody tr.click td:first-child{color:#1D4ED8;font-weight:600}
+.s-table tbody tr.hl{background:#FEF9C3}
+.s-valcell{display:flex;align-items:center;gap:10px;min-width:220px}
+.s-valbar{flex:1;height:8px;border-radius:4px;background:#EEF2F7;overflow:hidden}
+.s-valbar i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,#60A5FA,#2563EB)}
+.s-valcell b{min-width:84px;text-align:right;font-weight:600}
+.s-dot{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:8px;vertical-align:0}
+.s-pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:600}
+.s-pill.fresh{background:#DCFCE7;color:#15803D}.s-pill.mid{background:#FEF3C7;color:#B45309}.s-pill.old{background:#FEE2E2;color:#B91C1C}
+.s-more{text-align:center;padding-top:12px}
+.s-empty{padding:30px;text-align:center;color:#5B6B82}
+.s-foot{color:#94A3B8;font-size:12.5px;margin-top:16px}
+#sTip{position:fixed;z-index:60;pointer-events:none;background:#0F172A;color:#fff;border-radius:8px;padding:8px 11px;font-size:12.5px;line-height:1.5;opacity:0;transition:opacity .1s;max-width:280px;box-shadow:0 8px 24px -8px rgba(15,23,42,.5)}
+#sTip.on{opacity:1}
+@media (max-width:1080px){.s-kpis{grid-template-columns:1fr 1fr}.s-grid{grid-template-columns:1fr}}
+@media (max-width:560px){.s-kpis{grid-template-columns:1fr}}
 @media (min-width:2300px){
   .grid{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
@@ -181,7 +316,7 @@ footer{color:var(--faint);font-size:12.5px;padding:0 0 40px}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}.kpi{transform:none!important}}
 </style>
 </head>
-<body>
+<body class="light">
 <div class="rainbow" aria-hidden="true"></div>
 <header class="top wrap">
   <div class="title-row">
@@ -248,6 +383,33 @@ footer{color:var(--faint);font-size:12.5px;padding:0 0 40px}
 
   <footer id="foot">Values are delivery note amounts in ₹ for submitted delivery notes (cancelled DNs excluded), from ERP via Metabase question DN_S. Internal transfers are delivery notes to "Solarsquare Energy Pvt Ltd – Debtors".</footer>
 </main>
+<main class="wrap" id="stockApp" hidden>
+  <div class="s-head">
+    <div>
+      <div class="s-crumb" id="sCrumb"></div>
+      <h2 id="sTitle">Stock by warehouse</h2>
+      <p class="s-sub" id="sSub"></p>
+    </div>
+    <button class="s-btn primary" id="sDownload">Download CSV</button>
+  </div>
+  <section class="s-kpis" id="sKpis" aria-label="Stock headline numbers"></section>
+  <section class="s-grid">
+    <div class="s-card"><div class="s-card-h"><h3 id="sMapTitle">Where the stock sits</h3><span class="s-hint" id="sMapHint">Box size = stock value · click a warehouse to open it</span></div><div id="sTreemap" class="treemap"></div></div>
+    <div class="s-card"><div class="s-card-h"><h3>Receipts per month</h3><span class="s-hint">Click a month to show only that month</span></div><div id="sTrend"></div></div>
+  </section>
+  <section class="s-card">
+    <div class="s-card-h">
+      <h3 id="sTableTitle">Warehouses</h3>
+      <div class="s-tools">
+        <label class="s-search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="sSearch" type="search" placeholder="Search warehouse" aria-label="Search"></label>
+      </div>
+    </div>
+    <div class="s-table-wrap"><table class="s-table" id="sTable"></table></div>
+    <div class="s-more" id="sMore"></div>
+  </section>
+  <p class="s-foot" id="sFoot"></p>
+</main>
+<div id="sTip" role="tooltip"></div>
 <div id="msg" class="wrap">Loading dashboard…</div>
 
 <script>
@@ -403,12 +565,14 @@ function readHash() {
     if (h.m) st.metric = h.m;
     for (const d of DIMS) if (h[d]) st.F[d] = new Set(h[d].map(n => S.dims[d].indexOf(n)).filter(i => i >= 0));
     if (h.q) st.q = h.q;
+    if (h.sw) stk.wh = h.sw;
   } catch (e) {}
 }
 function writeHash() {
   const h = {d: DS.page, r: [st.from, st.to], m: st.metric};
   for (const d of DIMS) if (st.F[d].size) h[d] = [...st.F[d]].map(i => S.dims[d][i]);
   if (st.q) h.q = st.q;
+  if (DS.computed && stk.wh) h.sw = stk.wh;
   history.replaceState(null, '', '#' + encodeURIComponent(JSON.stringify(h)));
 }
 
@@ -790,7 +954,7 @@ $('#dl').addEventListener('click', async () => {
 
 // ---------- Wiring ----------
 // refresh(): filters changed (same dates). update(): dates changed, so part-months may need computing.
-function refresh() { writeHash(); renderControls(); renderChips(); renderKpis(); renderLists(); loadRaw(); }
+function refresh() { if (DS.computed) { writeHash(); renderStock(); return; } writeHash(); renderControls(); renderChips(); renderKpis(); renderLists(); loadRaw(); }
 let upTok = 0;
 async function update() {
   const my = ++upTok;
@@ -810,6 +974,7 @@ async function update() {
     return;
   }
   document.body.classList.remove('busy');
+  if (DS.computed) { renderStock(); return; }
   renderKpis(); renderLists(); loadRaw();
 }
 document.querySelector('#metric').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; st.metric = b.dataset.m; writeHash(); renderControls(); renderLists(); });
@@ -860,6 +1025,7 @@ async function buildStock(m, isLive) {
   stockData = D;
   return {months, first_date: first, last_date: last, dims, cube: [], dn_cube: []};
 }
+function niceStep(x) { const p = Math.pow(10, Math.floor(Math.log10(x || 1))), f = x / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p; }
 function stockAgeBucket(days) { return days <= 30 ? 0 : days <= 90 ? 1 : days <= 180 ? 2 : 3; }
 function stockAssemble(f, t) {
   const D = stockData, NI = S.dims.category.length + 1;
@@ -877,7 +1043,7 @@ function stockAssemble(f, t) {
   for (const [key, k] of latest) {
     const w = D.w[k], i = D.i[k], g = D.u[k], sIdx = stockAgeBucket(daysBetween(D.d[k], t)), qty = D.q[k];
     const docs = ids.get(key);
-    cube.push([0, w, i, g, sIdx, lines.get(key) || 0, qty * D.r[k], docs ? docs.size : 0, qty]);
+    cube.push([0, w, i, g, sIdx, lines.get(key) || 0, qty * D.r[k], docs ? docs.size : 0, qty, D.d[k]]);
     pairAge.set(S.dims.warehouse[w] + '\u0001' + S.dims.category[i], AGE[sIdx]);
     const dk = `${w}|${g}|${sIdx}`;
     let u = dnSets.get(dk); if (!u) { u = [0, w, g, sIdx, new Set()]; dnSets.set(dk, u); }
@@ -902,6 +1068,228 @@ function stockDocs(v, byDim) {
 }
 function inStock(v) { let n = 0; for (const r of v.cube) if (r[8] > 0 && okC(r)) n++; return n; }
 
+// ================= Stock page: warehouse first, then items of one warehouse =================
+const stk = {wh: null, sort: {key: 'value', dir: -1}, q: '', limit: 50};
+const SCOL = ['#2563EB','#0891B2','#0D9488','#16A34A','#65A30D','#CA8A04','#EA580C','#DC2626','#DB2777','#9333EA','#4F46E5','#0284C7'];
+const sTip = $('#sTip');
+function sShowTip(e, html) {
+  sTip.innerHTML = html; sTip.classList.add('on');
+  const r = sTip.getBoundingClientRect(); let x = e.clientX + 14, y = e.clientY + 14;
+  if (x + r.width > innerWidth - 8) x = e.clientX - r.width - 14;
+  if (y + r.height > innerHeight - 8) y = e.clientY - r.height - 14;
+  sTip.style.left = x + 'px'; sTip.style.top = y + 'px';
+}
+function sHideTip() { sTip.classList.remove('on'); }
+const stkWIdx = () => stk.wh == null ? -1 : S.dims.warehouse.indexOf(stk.wh);
+// distinct receipt documents in the view's dates, per warehouse (or per item inside one warehouse)
+function stockReceipts(v, wIdx) {
+  const D = stockData, sets = new Map(), all = new Set();
+  for (let k = 0; k < D.d.length; k++) {
+    const d = D.d[k]; if (d < v.f || d > v.t) continue;
+    if (wIdx >= 0 && D.w[k] !== wIdx) continue;
+    const key = wIdx >= 0 ? D.i[k] : D.w[k];
+    let x = sets.get(key); if (!x) { x = new Set(); sets.set(key, x); } x.add(D.id[k]); all.add(D.id[k]);
+  }
+  return {by: new Map([...sets].map(([k, x]) => [k, x.size])), total: all.size};
+}
+function stockGroups(v, wIdx) {
+  const groups = new Map();
+  for (const r of v.cube) {
+    if (wIdx >= 0 && r[1] !== wIdx) continue;
+    const key = wIdx >= 0 ? r[2] : r[1];
+    let g = groups.get(key);
+    if (!g) { g = {key, name: wIdx >= 0 ? S.dims.category[r[2]] : S.dims.warehouse[r[1]], value: 0, items: 0, lines: 0, last: '', qty: 0, uom: S.dims.group[r[3]], rate: 0}; groups.set(key, g); }
+    g.value += r[6]; g.lines += r[5]; if (r[8] > 0) g.items++; if (r[9] > g.last) g.last = r[9];
+    if (wIdx >= 0) { g.qty = r[8]; g.rate = r[8] ? r[6] / r[8] : 0; }
+  }
+  const rec = stockReceipts(v, wIdx);
+  for (const g of groups.values()) g.receipts = rec.by.get(g.key) || 0;
+  return {rows: [...groups.values()], receipts: rec.total};
+}
+function sDelta(cur, prev, label) {
+  if (prev == null) return `<div class="s-kpi-d">${label}</div>`;
+  if (!prev) return `<div class="s-kpi-d">Nothing in ${label}</div>`;
+  const p = (cur - prev) / Math.abs(prev) * 100;
+  return `<div class="s-kpi-d"><b class="${p >= 0 ? 'up' : 'down'}">${p >= 0 ? '▲' : '▼'} ${Math.abs(p).toFixed(1)}%</b> vs ${label}</div>`;
+}
+function renderStock() {
+  const wIdx = stkWIdx(), open = wIdx >= 0;
+  const cur = stockGroups(view, wIdx), prev = view.prev ? stockGroups(view.prev, wIdx) : null;
+  const sum = (rows, k) => rows.reduce((t, r) => t + r[k], 0);
+  const val = sum(cur.rows, 'value'), items = sum(cur.rows, 'items');
+  const pLabel = view.prevLabel, asOf = fmtDate(st.to);
+  // header + breadcrumb
+  $('#sCrumb').innerHTML = open ? `<button id="sBack">All warehouses</button> › ${esc(stk.wh)}` : '';
+  $('#sTitle').textContent = open ? stk.wh : 'Stock by warehouse';
+  $('#sSub').textContent = `Stock as on ${asOf} · receipts from ${fmtDate(st.from)} to ${asOf}`;
+  if (open) $('#sBack').onclick = () => { stk.wh = null; stk.q = ''; stk.limit = 50; $('#sSearch').value = ''; refresh(); };
+  // KPI cards
+  const v = inr(val, true), whWithStock = cur.rows.filter(r => r.items > 0).length;
+  const last = cur.rows.reduce((m, r) => r.last > m ? r.last : m, '');
+  $('#sKpis').innerHTML = `
+    <div class="s-kpi" style="--k:#2563EB"><div class="s-kpi-l"><i></i>Stock value</div><div class="s-kpi-v">${v.n}<small>${v.u}</small></div>${sDelta(val, prev && sum(prev.rows, 'value'), pLabel)}</div>
+    <div class="s-kpi" style="--k:#0D9488"><div class="s-kpi-l"><i></i>Items in stock</div><div class="s-kpi-v">${nfI.format(items)}</div>${sDelta(items, prev && sum(prev.rows, 'items'), pLabel)}</div>
+    <div class="s-kpi" style="--k:#EA580C"><div class="s-kpi-l"><i></i>Receipts</div><div class="s-kpi-v">${nfI.format(cur.receipts)}</div>${sDelta(cur.receipts, prev && prev.receipts, pLabel)}</div>
+    ${open
+      ? `<div class="s-kpi" style="--k:#9333EA"><div class="s-kpi-l"><i></i>Last receipt</div><div class="s-kpi-v" style="font-size:24px">${last ? fmtDate(last) : '—'}</div><div class="s-kpi-d">${last ? daysBetween(last, st.to) + ' days before ' + asOf : 'No receipts yet'}</div></div>`
+      : `<div class="s-kpi" style="--k:#9333EA"><div class="s-kpi-l"><i></i>Warehouses with stock</div><div class="s-kpi-v">${nfI.format(whWithStock)}</div>${sDelta(whWithStock, prev && prev.rows.filter(r => r.items > 0).length, pLabel)}</div>`}`;
+  renderTreemap(cur.rows, open, val);
+  renderTrend(wIdx);
+  renderStockTable(cur.rows, open, val);
+  $('#sFoot').textContent = DS.footer;
+}
+// ---------- treemap ----------
+function squarify(nodes, x, y, w, h) {
+  const out = [], total = nodes.reduce((s, n) => s + n.v, 0); if (!total) return out;
+  const items = nodes.map(n => ({...n, a: n.v * w * h / total}));
+  const worst = (row, len) => { const s = row.reduce((t, r) => t + r.a, 0); let mx = 0, mn = Infinity; for (const r of row) { if (r.a > mx) mx = r.a; if (r.a < mn) mn = r.a; } return Math.max(len * len * mx / (s * s), s * s / (len * len * mn)); };
+  let i = 0;
+  while (i < items.length) {
+    const len = Math.min(w, h), row = [items[i++]];
+    while (i < items.length && worst([...row, items[i]], len) <= worst(row, len)) row.push(items[i++]);
+    const s = row.reduce((t, r) => t + r.a, 0);
+    if (w >= h) { const cw = s / h; let cy = y; for (const r of row) { const ch = r.a / cw; out.push({...r, x, y: cy, w: cw, h: ch}); cy += ch; } x += cw; w -= cw; }
+    else { const ch = s / w; let cx = x; for (const r of row) { const cw = r.a / ch; out.push({...r, x: cx, y, w: cw, h: ch}); cx += cw; } y += ch; h -= ch; }
+  }
+  return out;
+}
+function renderTreemap(rows, open, total) {
+  const box = $('#sTreemap'), W = box.clientWidth || 800, H = box.clientHeight || 340;
+  $('#sMapTitle').textContent = open ? 'Items in this warehouse' : 'Where the stock sits';
+  $('#sMapHint').textContent = open ? 'Box size = stock value · click an item to find it in the table' : 'Box size = stock value · click a warehouse to open it';
+  const pos = rows.filter(r => r.value > 0).sort((a, b) => b.value - a.value);
+  if (!pos.length) { box.innerHTML = '<div class="s-empty">No stock for these dates.</div>'; return; }
+  const top = pos.slice(0, open ? 30 : 24), rest = pos.slice(top.length);
+  const nodes = top.map((r, k) => ({v: r.value, r, col: SCOL[k % SCOL.length]}));
+  if (rest.length) nodes.push({v: rest.reduce((t, r) => t + r.value, 0), other: rest.length});
+  const tiles = squarify(nodes, 0, 0, W, H);
+  box.innerHTML = tiles.map((t, k) => {
+    const big = t.w > 90 && t.h > 44, mid = t.w > 60 && t.h > 26;
+    const label = t.other ? `${t.other} more` : t.r.name;
+    return `<div class="tm${t.other ? ' other' : ''}" data-k="${k}" style="left:${t.x}px;top:${t.y}px;width:${t.w}px;height:${t.h}px;${t.other ? '' : `background:${t.col}`}">${mid ? `<b>${esc(label)}</b>` : ''}${big ? `<span>${inr(t.v)} · ${(t.v / total * 100).toFixed(1)}%</span>` : ''}</div>`;
+  }).join('');
+  box.onmousemove = e => {
+    const el = e.target.closest('.tm'); if (!el) { sHideTip(); return; }
+    const t = tiles[+el.dataset.k];
+    if (t.other) { sShowTip(e, `<b>${t.other} smaller ${open ? 'items' : 'warehouses'}</b><br>${inr(t.v)} together · ${(t.v / total * 100).toFixed(1)}%<br>See them in the table below`); return; }
+    const r = t.r;
+    sShowTip(e, open
+      ? `<b>${esc(r.name)}</b><br>Stock value ${inr(r.value)} (${(r.value / total * 100).toFixed(1)}%)<br>Qty ${nf2.format(r.qty)} ${esc(r.uom)} @ ₹${nf2.format(r.rate)}<br>Last receipt ${fmtDate(r.last)}`
+      : `<b>${esc(r.name)}</b><br>Stock value ${inr(r.value)} (${(r.value / total * 100).toFixed(1)}%)<br>${nfI.format(r.items)} items in stock · ${nfI.format(r.receipts)} receipts<br>Last receipt ${fmtDate(r.last)}<br><i>Click to open</i>`);
+  };
+  box.onmouseleave = sHideTip;
+  box.onclick = e => {
+    const el = e.target.closest('.tm'); if (!el) return;
+    const t = tiles[+el.dataset.k]; if (t.other) return;
+    if (!open) { sHideTip(); openWarehouse(t.r.name); }
+    else highlightRow(t.r.name);
+  };
+}
+function openWarehouse(name) { stk.wh = name; stk.q = ''; stk.limit = 50; stk.sort = {key: 'value', dir: -1}; $('#sSearch').value = ''; refresh(); scrollTo({top: 0, behavior: 'smooth'}); }
+function highlightRow(name) {
+  stk.q = ''; $('#sSearch').value = '';
+  const rows = sortedStockRows(lastStockRows, true), i = rows.findIndex(r => r.name === name);
+  if (i >= stk.limit) stk.limit = i + 1;
+  renderStockTable(lastStockRows, true, lastStockTotal);
+  const tr = document.querySelector(`#sTable tr[data-name="${CSS.escape(name)}"]`);
+  if (tr) { tr.classList.add('hl'); tr.scrollIntoView({behavior: 'smooth', block: 'center'}); setTimeout(() => tr.classList.remove('hl'), 2200); }
+}
+// ---------- receipts per month ----------
+function renderTrend(wIdx) {
+  const D = stockData, months = [], idx = new Map();
+  for (let m = st.from.slice(0, 7); m <= st.to.slice(0, 7); ) { idx.set(m, months.length); months.push({m, docs: new Set(), lines: 0}); const [y, mo] = m.split('-').map(Number); m = mo === 12 ? `${y + 1}-01` : `${y}-${String(mo + 1).padStart(2, '0')}`; }
+  for (let k = 0; k < D.d.length; k++) {
+    const d = D.d[k]; if (d < st.from || d > st.to) continue;
+    if (wIdx >= 0 && D.w[k] !== wIdx) continue;
+    const b = months[idx.get(d.slice(0, 7))]; b.docs.add(D.id[k]); b.lines++;
+  }
+  const svgW = $('#sTrend').clientWidth || 420, H = 300, pl = 44, pb = 34, pt = 14, n = months.length;
+  const max = Math.max(1, ...months.map(b => b.docs.size)), bw = (svgW - pl - 8) / n;
+  const step = niceStep(max / 4), top = Math.ceil(max / step) * step, y = v => pt + (H - pt - pb) * (1 - v / top);
+  let h = '';
+  for (let t = 0; t <= top + 1e-9; t += step) h += `<line x1="${pl}" x2="${svgW - 4}" y1="${y(t)}" y2="${y(t)}" stroke="#EEF2F7"/><text x="${pl - 8}" y="${y(t) + 4}" text-anchor="end" font-size="11.5" fill="#94A3B8">${nfI.format(t)}</text>`;
+  h += `<defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#60A5FA"/><stop offset="1" stop-color="#2563EB"/></linearGradient></defs>`;
+  months.forEach((b, i) => {
+    const gap = Math.min(14, bw * .3), x = pl + i * bw + gap / 2, w = Math.max(2, bw - gap), v = b.docs.size;
+    const [yy, mm] = b.m.split('-');
+    h += `<rect x="${x}" y="${y(v)}" width="${w}" height="${Math.max(0, H - pb - y(v))}" rx="4" fill="url(#sg)"/>`;
+    if (bw > 26 && v) h += `<text x="${x + w / 2}" y="${y(v) - 6}" text-anchor="middle" font-size="11" font-weight="600" fill="#334155">${nfI.format(v)}</text>`;
+    h += `<text x="${x + w / 2}" y="${H - pb + 16}" text-anchor="middle" font-size="11.5" fill="#5B6B82">${MON[+mm - 1]}</text>`;
+    if (i === 0 || mm === '01') h += `<text x="${x + w / 2}" y="${H - pb + 30}" text-anchor="middle" font-size="11" font-weight="600" fill="#94A3B8">${yy}</text>`;
+    h += `<rect class="bar-hit" data-i="${i}" x="${pl + i * bw}" y="${pt}" width="${bw}" height="${H - pt - pb}" fill="transparent"/>`;
+  });
+  $('#sTrend').innerHTML = `<svg viewBox="0 0 ${svgW} ${H}" role="img" aria-label="Receipts per month">${h}</svg>`;
+  const svg = $('#sTrend svg');
+  svg.onmousemove = e => { const el = e.target.closest('.bar-hit'); if (!el) { sHideTip(); return; } const b = months[+el.dataset.i]; const [yy, mm] = b.m.split('-'); sShowTip(e, `<b>${MON[+mm - 1]} ${yy}</b><br>${nfI.format(b.docs.size)} receipts · ${nfI.format(b.lines)} receipt lines<br><i>Click to show only this month</i>`); };
+  svg.onmouseleave = sHideTip;
+  svg.onclick = e => {
+    const el = e.target.closest('.bar-hit'); if (!el) return; sHideTip();
+    const m = months[+el.dataset.i].m;
+    st.from = clampDate(`${m}-01`); st.to = clampDate(monthEndOf(m)); update();
+  };
+}
+// ---------- table ----------
+let lastStockRows = [], lastStockTotal = 0;
+const STK_COLS = {
+  wh: [['name', 'Warehouse', 0], ['value', 'Stock value', 1], ['share', 'Share', 1], ['items', 'Items in stock', 1], ['receipts', 'Receipts', 1], ['last', 'Last receipt', 0]],
+  item: [['name', 'Item code', 0], ['qty', 'Qty in stock', 1], ['uom', 'UOM', 0], ['rate', 'Avg rate', 1], ['value', 'Stock value', 1], ['share', 'Share', 1], ['receipts', 'Receipts', 1], ['last', 'Last receipt', 0]]
+};
+function sortedStockRows(rows, open) {
+  const q = stk.q.trim().toLowerCase(), k = stk.sort.key === 'share' ? 'value' : stk.sort.key, dir = stk.sort.dir;
+  return rows.filter(r => !q || r.name.toLowerCase().includes(q))
+    .sort((a, b) => (typeof a[k] === 'string' ? a[k].localeCompare(b[k]) : a[k] - b[k]) * dir);
+}
+function agePill(last) {
+  if (!last) return '—';
+  const d = daysBetween(last, st.to), cls = d <= 30 ? 'fresh' : d <= 90 ? 'mid' : 'old';
+  return `<span class="s-pill ${cls}" title="${d} days before ${fmtDate(st.to)}">${fmtDate(last)}</span>`;
+}
+function renderStockTable(rows, open, total) {
+  lastStockRows = rows; lastStockTotal = total;
+  const cols = STK_COLS[open ? 'item' : 'wh'];
+  $('#sTableTitle').textContent = open ? `Items in ${stk.wh}` : 'Warehouses';
+  $('#sSearch').placeholder = open ? 'Search item code' : 'Search warehouse';
+  const list = sortedStockRows(rows, open), maxV = Math.max(1, ...rows.map(r => r.value)), shown = list.slice(0, stk.limit);
+  const head = '<thead><tr>' + cols.map(([k, label, numCol]) => `<th class="${numCol ? 'n' : ''}" data-k="${k}">${label}${stk.sort.key === k ? `<span class="arr">${stk.sort.dir > 0 ? '↑' : '↓'}</span>` : ''}</th>`).join('') + '</tr></thead>';
+  const rank = new Map([...rows].sort((a, b) => b.value - a.value).map((r, i) => [r.name, i]));
+  const body = shown.map(r => {
+    const col = rank.get(r.name) < (open ? 30 : 24) && r.value > 0 ? SCOL[rank.get(r.name) % SCOL.length] : '#CBD5E1';
+    const cells = cols.map(([k]) => {
+      if (k === 'name') return `<td><span class="s-dot" style="background:${col}"></span>${esc(r.name)}</td>`;
+      if (k === 'value') return `<td class="n"><div class="s-valcell"><div class="s-valbar"><i style="width:${Math.max(0, r.value / maxV * 100)}%"></i></div><b>${inr(r.value)}</b></div></td>`;
+      if (k === 'share') return `<td class="n">${total ? (r.value / total * 100).toFixed(1) : '0.0'}%</td>`;
+      if (k === 'last') return `<td>${agePill(r.last)}</td>`;
+      if (k === 'qty') return `<td class="n">${nf2.format(r.qty)}</td>`;
+      if (k === 'rate') return `<td class="n">₹${nf2.format(r.rate)}</td>`;
+      if (k === 'uom') return `<td>${esc(r.uom)}</td>`;
+      return `<td class="n">${nfI.format(r[k])}</td>`;
+    }).join('');
+    return `<tr class="${open ? '' : 'click'}" data-name="${esc(r.name)}" ${open ? '' : 'title="Click to open this warehouse"'}>${cells}</tr>`;
+  }).join('');
+  $('#sTable').innerHTML = head + `<tbody>${body || `<tr><td colspan="${cols.length}" class="s-empty">Nothing matches.</td></tr>`}</tbody>`;
+  $('#sMore').innerHTML = list.length > shown.length ? `<button class="s-btn" id="sMoreBtn">Show ${Math.min(50, list.length - shown.length)} more of ${nfI.format(list.length - shown.length)}</button>` : (list.length > 10 ? `<span class="s-hint">${nfI.format(list.length)} ${open ? 'items' : 'warehouses'}</span>` : '');
+  const more = $('#sMoreBtn'); if (more) more.onclick = () => { stk.limit += 50; renderStockTable(lastStockRows, open, total); };
+  $('#sTable thead').onclick = e => {
+    const th = e.target.closest('th'); if (!th) return;
+    const k = th.dataset.k; stk.sort = {key: k, dir: stk.sort.key === k ? -stk.sort.dir : (['name', 'uom'].includes(k) ? 1 : -1)};
+    renderStockTable(lastStockRows, open, total);
+  };
+  $('#sTable tbody').onclick = e => { if (open) return; const tr = e.target.closest('tr[data-name]'); if (tr) openWarehouse(tr.dataset.name); };
+}
+let sQT; $('#sSearch').addEventListener('input', e => { clearTimeout(sQT); sQT = setTimeout(() => { stk.q = e.target.value; stk.limit = 50; renderStockTable(lastStockRows, stkWIdx() >= 0, lastStockTotal); }, 200); });
+addEventListener('keydown', e => { if (e.key === 'Escape' && DS.computed && stk.wh) { stk.wh = null; refresh(); } });
+$('#sDownload').addEventListener('click', () => {
+  const open = stkWIdx() >= 0, cols = STK_COLS[open ? 'item' : 'wh'], list = sortedStockRows(lastStockRows, open);
+  const cell = (r, k) => k === 'share' ? (lastStockTotal ? (r.value / lastStockTotal * 100).toFixed(2) : '0') : k === 'value' || k === 'rate' ? r[k].toFixed(2) : r[k];
+  const q = v => /[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : v;
+  const lines = [[...(open ? ['Warehouse'] : []), ...cols.map(c => c[1])].map(q).join(',')];
+  for (const r of list) lines.push([...(open ? [stk.wh] : []), ...cols.map(([k]) => cell(r, k))].map(q).join(','));
+  const url = URL.createObjectURL(new Blob(['\uFEFF' + lines.join('\n') + '\n'], {type: 'text/csv'}));
+  const a = document.createElement('a'); a.href = url; a.download = `Stock_${open ? stk.wh.replace(/[^\w-]+/g, '_') : 'by_warehouse'}_as_on_${st.to}.csv`; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+});
+let sRz; addEventListener('resize', () => { clearTimeout(sRz); sRz = setTimeout(() => { if (DS.computed && S && !$('#stockApp').hidden) renderStock(); }, 150); });
+
 let loadTok = 0;
 async function loadDataset(key, fromHash) {
   const my = ++loadTok;
@@ -915,6 +1303,9 @@ async function loadDataset(key, fromHash) {
   $('#tCat').textContent = DS.catTitle || 'By item category'; $('#hCat').textContent = DS.catHint || 'Click to filter';
   $('#tWh').textContent = DS.whTitle || 'By warehouse'; $('#mLines').textContent = DS.linesLabel || 'Line items';
   $('#mDocs').textContent = DS.docsLabel; $('#hTable').textContent = DS.tableHint; $('#q').placeholder = DS.searchPh; $('#foot').textContent = DS.footer;
+  document.body.classList.add('light');   // one light theme for every page
+  $('#stockApp').hidden = true; if (DS.computed) { $('#app').hidden = true; $('#msg').hidden = false; $('#msg').textContent = 'Loading stock data…'; }
+  stk.wh = null; stk.q = ''; stk.limit = 50; stk.sort = {key: 'value', dir: -1}; $('#sSearch').value = '';
   // forget everything from the previous dataset
   raw.token++; upTok++;
   Object.assign(raw, {header: null, idx: null, rows: [], matched: 0, done: false, sort: null, view: null, layout: null});
@@ -942,7 +1333,7 @@ async function loadDataset(key, fromHash) {
   } catch (e) {
     if (my !== loadTok) return;
     S = null;
-    $('#app').hidden = true; $('#msg').hidden = false; $('#fresh').textContent = '';
+    $('#app').hidden = true; $('#stockApp').hidden = true; $('#msg').hidden = false; $('#fresh').textContent = '';
     $('#msg').innerHTML = e.message === 'summary'
       ? `The ${DS.docsLabel} summary hasn't been built yet. Go to <b>Actions → ${DS.workflow} → Run workflow</b>, wait for it to finish, then reload this page.`
       : `No ${DS.docsLabel} data yet. Go to <b>Actions → ${DS.workflow} → Run workflow</b>, wait for it to finish, then reload this page.`;
@@ -958,7 +1349,8 @@ async function loadDataset(key, fromHash) {
     S.dims.group.forEach((n, i) => { if (!DS.defaultExcludeGroup.test(n)) st.F.group.add(i); });
   for (const el of [$('#dFrom'), $('#dTo')]) { el.min = S.first_date; el.max = S.last_date; }
   if (st.q) $('#q').value = st.q;
-  $('#msg').hidden = true; $('#app').hidden = false;
+  $('#msg').hidden = true;
+  if (DS.computed) $('#stockApp').hidden = false; else $('#app').hidden = false;
   renderHeader(); update();
 }
 $('#dsSwitch').addEventListener('click', e => {
