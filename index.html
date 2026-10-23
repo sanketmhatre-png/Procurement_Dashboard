@@ -190,7 +190,7 @@ footer{color:var(--faint);font-size:12.5px;padding:0 0 40px}
       <div class="fresh" id="fresh">Loading…</div>
     </div>
     <div class="top-actions">
-      <div class="seg pages" id="dsSwitch" role="group" aria-label="Dataset"><button data-ds="dn">Delivery notes</button><button data-ds="bom">BOMs</button></div>
+      <div class="seg pages" id="dsSwitch" role="group" aria-label="Dataset"><button data-ds="dn">Delivery notes</button><button data-ds="bom">BOMs</button><button data-ds="stock">Stock</button></div>
       <button class="ghost" id="copyLink" title="Copy a link to this exact view">Copy link to this view</button>
     </div>
   </div>
@@ -216,15 +216,15 @@ footer{color:var(--faint);font-size:12.5px;padding:0 0 40px}
     <div class="seg" id="metric" role="group" aria-label="Measure">
       <button data-m="amount">Value</button>
       <button data-m="dns" id="mDocs">Delivery notes</button>
-      <button data-m="lines">Line items</button>
+      <button data-m="lines" id="mLines">Line items</button>
     </div>
   </div>
 
   <section class="grid">
-    <div class="panel"><div class="ph"><h2><span class="dot" style="background:var(--c1);color:var(--c1)"></span>By state</h2><span class="hint">From project ID</span></div><div class="share" data-share="state"></div><div class="list" data-dim="state"></div></div>
+    <div class="panel"><div class="ph"><h2><span class="dot" style="background:var(--c1);color:var(--c1)"></span><span id="tState">By state</span></h2><span class="hint" id="hState">From project ID</span></div><div class="share" data-share="state"></div><div class="list" data-dim="state"></div></div>
     <div class="panel"><div class="ph"><h2><span class="dot" style="background:var(--c5);color:var(--c5)"></span><span id="tGroup">By customer group</span></h2><span class="hint" id="hGroup">Click to filter</span></div><div class="share" data-share="group"></div><div class="list" data-dim="group"></div></div>
-    <div class="panel"><div class="ph"><h2><span class="dot" style="background:var(--c3);color:var(--c3)"></span>By item category</h2><span class="hint">Click to filter</span></div><div class="share" data-share="category"></div><div class="list" data-dim="category"></div></div>
-    <div class="panel"><div class="ph"><h2><span class="dot" style="background:var(--c2);color:var(--c2)"></span>By warehouse</h2><span class="hint" id="hWh">Dispatching warehouse</span></div><div class="share" data-share="warehouse"></div><div class="list" data-dim="warehouse"></div></div>
+    <div class="panel"><div class="ph"><h2><span class="dot" style="background:var(--c3);color:var(--c3)"></span><span id="tCat">By item category</span></h2><span class="hint" id="hCat">Click to filter</span></div><div class="share" data-share="category"></div><div class="list" data-dim="category"></div></div>
+    <div class="panel"><div class="ph"><h2><span class="dot" style="background:var(--c2);color:var(--c2)"></span><span id="tWh">By warehouse</span></h2><span class="hint" id="hWh">Dispatching warehouse</span></div><div class="share" data-share="warehouse"></div><div class="list" data-dim="warehouse"></div></div>
   </section>
 
   <section class="panel raw">
@@ -292,7 +292,28 @@ const DATASETS = {
   tableHint: 'Every BOM line created in the period, with the filters above. Click a BOM number to see all its lines.',
   searchPh: 'Search BOM, project ID, item code or name',
   footer: 'Values are BOM line amounts in ₹, dated by when each BOM was created, from ERP via Metabase question BOM_S. Cancelled BOMs are left out by default; remove the Status filter to include them.'
-}
+},
+ stock: {
+  page: 'stock', folder: 'stock', workflow: 'Sync dashboard data', filePrefix: 'Stock_receipts',
+  computed: true,   // no summary file: the page builds the figures from the stock files when opened
+  valueLabel: 'Stock value', docsLabel: 'Receipts', linesLabel: 'Receipt lines', avgLabel: 'Items in stock',
+  groupLabel: 'Unit', catLabel: 'Item', stateLabel: 'Last receipt', groupFromStatus: false, defaultExcludeGroup: null,
+  col: {id: 'ID', date: 'Date', proj: 'warehouse', wh: 'warehouse', cat: 'item_code', code: 'item_code', name: 'UOM', amt: 'QTY', status: null},
+  // [label, minimum width px, share of spare width, priority]; low-priority columns hide on narrow screens
+  cols: {Date:['Date',100,0,8], warehouse:['Warehouse',170,1.5,9], item_code:['Item code',190,2,10], ID:['Document',150,1,7],
+    QTY:['Qty after receipt',130,.3,10], AVG_Rate:['Avg rate',100,.3,6], UOM:['UOM',70,0,5]},
+  hide: [],
+  num: ['QTY', 'AVG_Rate'],
+  title: 'Stock | Procurement Dashboard | SolarSquare',
+  stateTitle: 'By last receipt age', stateHint: 'Days since last receipt',
+  groupTitle: 'By unit', groupHint: 'Unit of measure',
+  catTitle: 'By item', catHint: 'Click to filter',
+  whTitle: 'By warehouse', whHint: 'Stock location',
+  rowsLabel: 'stock receipt lines',
+  tableHint: 'Every stock receipt in the period, with the filters above. Qty is the stock balance in that warehouse right after the receipt.',
+  searchPh: 'Search item code, document or warehouse',
+  footer: 'Stock value = quantity after each item\'s latest receipt (up to the "to" date) × its average rate, per warehouse, from ERP via Metabase question "stock Balnce". That query lists incoming entries only, so stock issued after an item\'s last receipt is not deducted, and items with no receipt since 1 Apr 2026 are not included.'
+ }
 };
 let DS = DATASETS.dn;
 // ==================================================================================================================
@@ -438,6 +459,7 @@ async function partial(seg) {
   return res;
 }
 async function assemble(f, t) {
+  if (DS.computed) return stockAssemble(f, t);
   const cube = [], dn = [];
   for (const sg of segments(f, t)) {
     const p = sg.full ? {cube: cubeByMonth[sg.i], dn: dnByMonth[sg.i]} : await partial(sg);
@@ -453,13 +475,16 @@ const okD = (r, skip) => ['warehouse','group','state'].every(d => d === skip || 
 function totals(v) {
   let amount = 0, lines = 0, catDns = 0, dns = 0;
   for (const r of v.cube) if (okC(r)) { lines += r[5]; amount += r[6]; catDns += r[7]; }
-  if (st.F.category.size) dns = catDns;
+  if (DS.computed) dns = stockDocs(v);
+  else if (st.F.category.size) dns = catDns;
   else for (const r of v.dn) if (okD(r)) dns += r[4];
   return {amount, lines, dns};
 }
 function breakdown(dim, metric) {
-  const out = new Map();
-  if (metric === 'dns' && dim !== 'category' && !st.F.category.size) {
+  let out = new Map();
+  if (metric === 'dns' && DS.computed) {
+    out = stockDocs(view, dim);
+  } else if (metric === 'dns' && dim !== 'category' && !st.F.category.size) {
     for (const r of view.dn) if (okD(r, dim)) out.set(r[DPOS[dim]], (out.get(r[DPOS[dim]]) || 0) + r[4]);
   } else {
     const k = metric === 'amount' ? 6 : metric === 'lines' ? 5 : 7, p = CPOS[dim];
@@ -472,7 +497,7 @@ function breakdown(dim, metric) {
 // ---------- Rendering: header, controls, chips, KPIs ----------
 function renderHeader() {
   const last = new Date(manifest.last_refresh);
-  $('#fresh').innerHTML = `${nfI.format(manifest.total_rows)} line items from ${fmtDate(S.first_date)} to <b>${fmtDate(S.last_date)}</b>. Refreshed ${last.toLocaleString('en-IN', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'})}.`;
+  $('#fresh').innerHTML = `${nfI.format(manifest.total_rows)} ${DS.rowsLabel || 'line items'} from ${fmtDate(S.first_date)} to <b>${fmtDate(S.last_date)}</b>. Refreshed ${last.toLocaleString('en-IN', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'})}.`;
 }
 function renderControls() {
   $('#dFrom').value = st.from; $('#dTo').value = st.to;
@@ -510,8 +535,10 @@ function renderKpis() {
   $('#kpis').innerHTML = `
     <div class="kpi" style="--k:var(--c1)"><div class="lbl">${DS.valueLabel}</div><div class="val">${v.n}<small>${v.u}</small></div>${deltaHtml(cur.amount, prev && prev.amount, plabel)}</div>
     <div class="kpi" style="--k:var(--c2)"${dnNote}><div class="lbl">${DS.docsLabel}</div><div class="val">${nfI.format(cur.dns)}</div>${deltaHtml(cur.dns, prev && prev.dns, plabel)}</div>
-    <div class="kpi" style="--k:var(--c3)"><div class="lbl">Line items</div><div class="val">${nfI.format(cur.lines)}</div>${deltaHtml(cur.lines, prev && prev.lines, plabel)}</div>
-    <div class="kpi" style="--k:var(--c5)"><div class="lbl">${DS.avgLabel}</div><div class="val">${av.n}<small>${av.u}</small></div>${deltaHtml(avg, pavg, plabel)}</div>`;
+    <div class="kpi" style="--k:var(--c3)"><div class="lbl">${DS.linesLabel || 'Line items'}</div><div class="val">${nfI.format(cur.lines)}</div>${deltaHtml(cur.lines, prev && prev.lines, plabel)}</div>
+    ${DS.computed
+      ? `<div class="kpi" style="--k:var(--c5)"><div class="lbl">${DS.avgLabel}</div><div class="val">${nfI.format(inStock(view))}</div>${deltaHtml(inStock(view), view.prev ? inStock(view.prev) : null, plabel)}</div>`
+      : `<div class="kpi" style="--k:var(--c5)"><div class="lbl">${DS.avgLabel}</div><div class="val">${av.n}<small>${av.u}</small></div>${deltaHtml(avg, pavg, plabel)}</div>`}`;
 }
 
 // ---------- 3D tilt on headline cards ----------
@@ -600,7 +627,7 @@ function setHeader(h) {
   raw.header = h;
   const f = n => h.indexOf(n);
   const C = DS.col;
-  raw.idx = {dn: f(C.id), date: f(C.date), proj: f(C.proj), wh: f(C.wh), cat: f(C.cat), code: f(C.code), name: f(C.name), amt: f(C.amt), status: C.status ? f(C.status) : -1};
+  raw.idx = {dn: f(C.id), date: f(C.date), proj: f(C.proj), wh: f(C.wh), cat: f(C.cat), code: f(C.code), name: f(C.name), amt: f(C.amt), status: C.status ? f(C.status) : -1, uom: f('UOM'), rate: f('AVG_Rate')};
   buildHead();
 }
 function makeMatcher(seg) {
@@ -610,7 +637,10 @@ function makeMatcher(seg) {
     if (checkDate) { const d = rowDate(row[I.date]); if (d < seg.f || d > seg.t) return false; }
     if (names.warehouse && !names.warehouse.has(norm(row[I.wh], 'No warehouse'))) return false;
     if (names.category && !names.category.has(norm(row[I.cat], 'Uncategorised'))) return false;
-    if (names.group || names.state) {
+    if ((names.group || names.state) && DS.computed) {
+      if (names.group && !names.group.has(norm(row[I.uom], 'No UOM'))) return false;
+      if (names.state && !names.state.has(view.pairAge.get(norm(row[I.wh], 'No warehouse') + '\u0001' + norm(row[I.cat], 'Uncategorised')))) return false;
+    } else if (names.group || names.state) {
       const ck = I.status >= 0 ? row[I.proj] + '\u0001' + row[I.status] : row[I.proj];
       let ci = cache.get(ck); if (!ci) { ci = groupState(row[I.proj], row[I.status]); cache.set(ck, ci); }
       if (names.group && !names.group.has(ci[0])) return false;
@@ -662,15 +692,15 @@ async function loadRaw() {
 function setProg(p) { const el = $('#prog'); el.classList.toggle('on', p != null); el.firstElementChild.style.width = ((p || 0) * 100) + '%'; }
 function renderRawStat(total, loading) {
   const shown = raw.rows.length, el = $('#rawstat'), period = dateRangeLabel(st.from, st.to);
-  const searching = !!st.q.trim();
-  if (loading && !shown) { el.textContent = searching ? `Searching ${period}…` : 'Loading line items…'; return; }
-  if (!searching && loading) { el.innerHTML = `Loading the newest line items… <b>${nfI.format(shown)}</b> of <b>${nfI.format(total)}</b>`; return; }
+  const searching = !!st.q.trim(), noun = (DS.linesLabel || 'Line items').toLowerCase();
+  if (loading && !shown) { el.textContent = searching ? `Searching ${period}…` : `Loading ${noun}…`; return; }
+  if (!searching && loading) { el.innerHTML = `Loading the newest ${noun}… <b>${nfI.format(shown)}</b> of <b>${nfI.format(total)}</b>`; return; }
   if (searching && loading) { el.innerHTML = `<b>${nfI.format(raw.matched)}</b> matches so far, still searching ${period}…`; return; }
   const t = total ?? raw.matched;
-  if (!t) { el.textContent = searching ? `No line items match "${st.q}" between ${period}.` : 'No line items for these dates and filters.'; return; }
+  if (!t) { el.textContent = searching ? `No ${noun} match "${st.q}" between ${period}.` : `No ${noun} for these dates and filters.`; return; }
   el.innerHTML = shown < t
-    ? `Showing the newest <b>${nfI.format(shown)}</b> of <b>${nfI.format(t)}</b> line items. Search or filter to narrow down; the download includes all ${nfI.format(t)}.`
-    : `<b>${nfI.format(t)}</b> line items. Click a column heading to sort.`;
+    ? `Showing the newest <b>${nfI.format(shown)}</b> of <b>${nfI.format(t)}</b> ${noun}. Search or filter to narrow down; the download includes all ${nfI.format(t)}.`
+    : `<b>${nfI.format(t)}</b> ${noun}. Click a column heading to sort.`;
 }
 function buildHead() {
   if (!raw.header) return;
@@ -773,7 +803,7 @@ async function update() {
     const cur = await assemble(st.from, st.to);
     const prev = hasPrev ? await assemble(pf, pt) : null;
     if (my !== upTok) return;
-    view.cube = cur.cube; view.dn = cur.dn; view.prev = prev;
+    view.cube = cur.cube; view.dn = cur.dn; view.prev = prev; view.pairAge = cur.pairAge || null; view.f = cur.f; view.t = cur.t; view.ageIdx = cur.ageIdx;
     view.prevLabel = hasPrev ? dateRangeLabel(pf, pt) : `Since ${fmtDate(st.from)}`;
   } catch (e) {
     if (my === upTok) { document.body.classList.remove('busy'); $('#rawstat').textContent = e.message; }
@@ -801,14 +831,89 @@ $('#copyLink').addEventListener('click', async () => {
   setTimeout(() => $('#copyLink').textContent = 'Copy link to this view', 2000);
 });
 
+// ---------- Stock: figures built in the browser from the stock files ----------
+// Stock balance of an item in a warehouse on a date = the QTY of its latest receipt up to that date
+// (QTY in the stock query is the balance right after each receipt), valued at that receipt's average rate.
+const AGE = ['0–30 days', '31–90 days', '91–180 days', 'Over 180 days'];
+let stockData = null;
+async function buildStock(m, isLive) {
+  const months = Object.keys(m.months).sort();
+  const D = {d: [], w: [], i: [], u: [], id: [], q: [], r: []};
+  const dims = {warehouse: [], category: [], group: [], state: AGE.slice()}, maps = {warehouse: new Map(), category: new Map(), group: new Map()};
+  const ix = (k, v) => { let j = maps[k].get(v); if (j === undefined) { j = dims[k].length; dims[k].push(v); maps[k].set(v, j); } return j; };
+  let first = '', last = '';
+  for (let k = 0; k < months.length; k++) {
+    if (!isLive()) return null;
+    $('#fresh').textContent = `Loading stock data… ${k + 1} of ${months.length} months`;
+    const blob = await getMonth(months[k]);
+    await parseBlob(blob, rows => {
+      const I = raw.idx;
+      for (const r of rows) {
+        const d = rowDate(r[I.date]); if (!d) continue;
+        D.d.push(d); D.w.push(ix('warehouse', norm(r[I.wh], 'No warehouse'))); D.i.push(ix('category', norm(r[I.cat], 'Uncategorised')));
+        D.u.push(ix('group', norm(r[I.uom], 'No UOM'))); D.id.push(r[I.dn]); D.q.push(num(r[I.amt])); D.r.push(num(r[I.rate]));
+        if (!first || d < first) first = d; if (!last || d > last) last = d;
+      }
+    }, isLive);
+  }
+  if (!isLive()) return null;
+  stockData = D;
+  return {months, first_date: first, last_date: last, dims, cube: [], dn_cube: []};
+}
+function stockAgeBucket(days) { return days <= 30 ? 0 : days <= 90 ? 1 : days <= 180 ? 2 : 3; }
+function stockAssemble(f, t) {
+  const D = stockData, NI = S.dims.category.length + 1;
+  const latest = new Map(), lines = new Map(), ids = new Map();
+  for (let k = 0; k < D.d.length; k++) {          // rows are in date order per item and warehouse
+    const d = D.d[k]; if (d > t) continue;
+    const key = D.w[k] * NI + D.i[k];
+    latest.set(key, k);
+    if (d >= f) {
+      lines.set(key, (lines.get(key) || 0) + 1);
+      let s = ids.get(key); if (!s) { s = new Set(); ids.set(key, s); } s.add(D.id[k]);
+    }
+  }
+  const cube = [], dnSets = new Map(), pairAge = new Map();
+  for (const [key, k] of latest) {
+    const w = D.w[k], i = D.i[k], g = D.u[k], sIdx = stockAgeBucket(daysBetween(D.d[k], t)), qty = D.q[k];
+    const docs = ids.get(key);
+    cube.push([0, w, i, g, sIdx, lines.get(key) || 0, qty * D.r[k], docs ? docs.size : 0, qty]);
+    pairAge.set(S.dims.warehouse[w] + '\u0001' + S.dims.category[i], AGE[sIdx]);
+    const dk = `${w}|${g}|${sIdx}`;
+    let u = dnSets.get(dk); if (!u) { u = [0, w, g, sIdx, new Set()]; dnSets.set(dk, u); }
+    if (docs) for (const x of docs) u[4].add(x);
+  }
+  const dn = [...dnSets.values()].map(u => [u[0], u[1], u[2], u[3], u[4].size]);
+  const ageIdx = new Map(); for (const [key, k] of latest) ageIdx.set(key, stockAgeBucket(daysBetween(D.d[k], t)));
+  return {cube, dn, pairAge, f, t, ageIdx};
+}
+// Exact count of distinct receipt documents, optionally split by one breakdown dimension
+function stockDocs(v, byDim) {
+  const D = stockData, NI = S.dims.category.length + 1, sets = new Map(), all = new Set();
+  for (let k = 0; k < D.d.length; k++) {
+    const d = D.d[k]; if (d < v.f || d > v.t) continue;
+    const pos = {warehouse: D.w[k], category: D.i[k], group: D.u[k], state: v.ageIdx.get(D.w[k] * NI + D.i[k])};
+    if (!DIMS.every(dm => dm === byDim || !st.F[dm].size || st.F[dm].has(pos[dm]))) continue;
+    if (byDim) { let x = sets.get(pos[byDim]); if (!x) { x = new Set(); sets.set(pos[byDim], x); } x.add(D.id[k]); }
+    else all.add(D.id[k]);
+  }
+  if (!byDim) return all.size;
+  return new Map([...sets].map(([key, x]) => [key, x.size]));
+}
+function inStock(v) { let n = 0; for (const r of v.cube) if (r[8] > 0 && okC(r)) n++; return n; }
+
 let loadTok = 0;
 async function loadDataset(key, fromHash) {
   const my = ++loadTok;
   DS = DATASETS[key] || DATASETS.dn;
-  COLS = DS.cols; HIDE = new Set(DS.hide); NUMC = new Set(DS.num); DIM_LABEL.group = DS.groupLabel;
+  COLS = DS.cols; HIDE = new Set(DS.hide); NUMC = new Set(DS.num);
+  DIM_LABEL.group = DS.groupLabel; DIM_LABEL.category = DS.catLabel || 'Category'; DIM_LABEL.state = DS.stateLabel || 'State';
   document.querySelectorAll('#dsSwitch button').forEach(b => b.setAttribute('aria-pressed', b.dataset.ds === DS.page));
   document.title = DS.title;
   $('#tGroup').textContent = DS.groupTitle; $('#hGroup').textContent = DS.groupHint; $('#hWh').textContent = DS.whHint;
+  $('#tState').textContent = DS.stateTitle || 'By state'; $('#hState').textContent = DS.stateHint || 'From project ID';
+  $('#tCat').textContent = DS.catTitle || 'By item category'; $('#hCat').textContent = DS.catHint || 'Click to filter';
+  $('#tWh').textContent = DS.whTitle || 'By warehouse'; $('#mLines').textContent = DS.linesLabel || 'Line items';
   $('#mDocs').textContent = DS.docsLabel; $('#hTable').textContent = DS.tableHint; $('#q').placeholder = DS.searchPh; $('#foot').textContent = DS.footer;
   // forget everything from the previous dataset
   raw.token++; upTok++;
@@ -819,12 +924,21 @@ async function loadDataset(key, fromHash) {
   $('#chips').innerHTML = ''; $('#fresh').textContent = 'Loading…';
   try {
     const bust = '?t=' + Date.now();
+    if (DS.computed) {
+      const m = await fetch(`${DS.folder}/manifest.json` + bust, {cache: 'no-store'}).then(r => { if (!r.ok) throw new Error('manifest'); return r.json(); });
+      if (my !== loadTok) return;
+      manifest = m;
+      const s = await buildStock(m, () => my === loadTok);
+      if (!s) return;
+      S = s; M = S.months; raw.layout = null;
+    } else {
     const [m, s] = await Promise.all([
       fetch(`${DS.folder}/manifest.json` + bust, {cache: 'no-store'}).then(r => { if (!r.ok) throw new Error('manifest'); return r.json(); }),
       fetch(`${DS.folder}/summary.json` + bust, {cache: 'no-store'}).then(r => { if (!r.ok) throw new Error('summary'); return r.json(); })
     ]);
     if (my !== loadTok) return;
     manifest = m; S = s; M = S.months;
+    }
   } catch (e) {
     if (my !== loadTok) return;
     S = null;
