@@ -38,11 +38,11 @@
   },
   "2026-10": {
    "file": "stock_2026-10.csv.gz",
-   "rows": 16523,
+   "rows": 16931,
    "amount": 0.0,
-   "bytes": 220674
+   "bytes": 225347
   }
  },
- "last_refresh": "2026-10-23T06:09:58Z",
- "total_rows": 148914
+ "last_refresh": "2026-10-23T08:57:06Z",
+ "total_rows": 149322
 }
