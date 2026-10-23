@@ -1,0 +1,48 @@
+{
+ "months": {
+  "2026-04": {
+   "file": "stock_2026-04.csv.gz",
+   "rows": 20198,
+   "amount": 0.0,
+   "bytes": 272015
+  },
+  "2026-05": {
+   "file": "stock_2026-05.csv.gz",
+   "rows": 24952,
+   "amount": 0.0,
+   "bytes": 329721
+  },
+  "2026-06": {
+   "file": "stock_2026-06.csv.gz",
+   "rows": 24090,
+   "amount": 0.0,
+   "bytes": 318541
+  },
+  "2026-07": {
+   "file": "stock_2026-07.csv.gz",
+   "rows": 24839,
+   "amount": 0.0,
+   "bytes": 329588
+  },
+  "2026-08": {
+   "file": "stock_2026-08.csv.gz",
+   "rows": 15025,
+   "amount": 0.0,
+   "bytes": 203150
+  },
+  "2026-09": {
+   "file": "stock_2026-09.csv.gz",
+   "rows": 23287,
+   "amount": 0.0,
+   "bytes": 308075
+  },
+  "2026-10": {
+   "file": "stock_2026-10.csv.gz",
+   "rows": 16523,
+   "amount": 0.0,
+   "bytes": 220674
+  }
+ },
+ "last_refresh": "2026-10-23T06:09:58Z",
+ "total_rows": 148914
+}
